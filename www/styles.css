@@ -1,0 +1,75 @@
+/* ---- BASE AND RESPONSIVE STYLES (MOBILE/TABLET) ---- */
+@media (max-width: 991px) {
+    /* Body & Base Text */
+    body { font-size: 15px !important; line-height: 1.5 !important; }
+    p, li, span, label { font-size: 20px !important; }
+    
+    /* Navbar */
+    .navbar-brand { font-size: 24px !important; }
+    .navbar-nav .nav-link { font-size: 20px !important; padding: 12px 16px !important; }
+    .navbar-toggler { padding: 10px !important; }
+    
+    /* Cards & Layout */
+    .card-header { font-size: 26px !important; padding: 14px !important; }
+    .card-body { padding: 16px !important; }
+    .graph-card { height: 1000px; }
+    .card-body * { font-size: 25px !important; }
+    .card-header * { font-size: 25px !important; }
+    .shiny-html-output { font-size: 25px !important; }
+}
+
+/* ---- SPECIFICS (ALL SCREENS) ---- */
+.individual-picker { 
+    /* background-color: #faebf8; */
+    background-color: #000000;
+    padding: 15px; 
+    border-radius: 5px; 
+    min-height: 100%;
+}
+
+.shiny-spinner-output-container { min-height: 875px !important; }
+.shiny-spinner-output-container .shiny-plot-output { min-height: 875px !important; }
+
+/* ---- VIRTUAL SELECT PICKERS GLOBAL CSS ---- */
+.vscomp-wrapper {
+    --vs-border-color: #E683A9;
+    --vs-text-color: #6E6D6D;
+    --vs-active-bg-color: #E683A9;
+    --vs-active-text-color: #ffffff;
+}
+
+#selected_id .vscomp-toggle-button {
+    background: #F0B4C4 !important;
+    background-color: #F0B4C4 !important;
+    border: 2px solid #E683A9 !important;
+    border-radius: 5px !important;
+}
+
+#selected_id .vscomp-toggle-button .vscomp-value {
+    color: #6E6D6D !important;
+    font-size: 20px !important;
+}
+
+.vscomp-option-text { font-size: 30px !important; }
+
+.vscomp-option { 
+    font-size: 22px !important; 
+    padding: 14px !important; 
+    min-height: 50px !important; 
+    box-sizing: border-box !important;
+    height: auto !important; 
+    max-height: 55vh !important;
+}
+
+.vscomp-option, .vscomp-option.selected { color: #6E6D6D !important; }
+
+.vscomp-option.focused, .vscomp-option.selected.focused {
+    background-color: #F0B4C4 !important;
+    color: #ffffff !important;
+}
+
+.vscomp-search-input { font-size: 20px !important; padding: 10px !important; }
+.vscomp-no-options { font-size: 20px !important; }
+.vscomp-value-tag { font-size: 18px !important; padding: 4px 8px !important; }
+.vscomp-dropbox-container-bottom { display: none !important; }
+.vscomp-dropbox { height: 100% !important; }
