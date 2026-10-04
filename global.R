@@ -16,10 +16,14 @@ library(plotly)
 source("helper_functions.R")
 
 
-secret_json <- Sys.getenv("GOOGLE_SHEETS_JSON")
+json_string <- Sys.getenv("GOOGLE_SHEETS_JSON")
 
-path <- ifelse(secret_json != "", secret_json, "data/api-key.json")
-gs4_auth(path = path)
+if (json_string != "") {
+    gs4_auth(path = json_string)
+} else {
+    gs4_auth(path = "data/api-key.json")
+}
+
 
 sheet_link <- paste0(
     "https://docs.google.com/spreadsheets/d/",
