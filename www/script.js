@@ -29,3 +29,27 @@ $(document).on('shiny:idle', function() {
 });
 
 setTimeout(resizeFrame, 2000);
+
+// ---- Admin Panel -------------------------------------------------------------
+
+// Pressing Enter in the password box signs in. Shiny debounces text inputs by
+// ~250ms, so push the current value to the server first, then click the button.
+$(document).on('keydown', '#password', function (e) {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    if (window.Shiny && Shiny.setInputValue) {
+        Shiny.setInputValue('password', this.value, { priority: 'event' });
+    }
+    $('#login').trigger('click');
+});
+
+// Eye button: show / hide the password.
+$(document).on('click', '.pw-toggle', function () {
+    var input = $('#password');
+    var reveal = input.attr('type') === 'password';
+    input.attr('type', reveal ? 'text' : 'password');
+    $(this)
+        .toggleClass('is-showing', reveal)
+        .attr('aria-label', reveal ? 'Hide password' : 'Show password');
+    input.trigger('focus');
+});
