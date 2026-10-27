@@ -37,13 +37,9 @@ roster <- paste0(
 )
 
 raw <- read_sheet(database)
-roster <- read_sheet(roster, sheet = 2)
+roster <- read_sheet(roster, sheet = 2) |>
+    select(!`Column 1`)
 data <- process_data(raw, roster)
 
-summary <- data |>
-    group_by(student_ID) |>
-    summarize(total = sum(time_spent)) |>
-    arrange(desc(total)) |>
-    rowwise() |>
-    mutate(total_string = hour_min_format(total))
+summary <- process_summary(data, NA)
 

@@ -1,16 +1,21 @@
 server <- function(input, output, session) {
+    # Logistical Variables
     login <- reactiveVal(rstudioapi::isAvailable())
     tabs_shown <- reactiveVal(FALSE)
     login_fails <- reactiveVal(0L)
     correct_password <- "Justus Eichhorn - Czerny: Etudes for Piano, Op. 740: No. 14 in G Minor (Arr. Eichhorn)"
+    
+    # Dataframes
+    summary <- reactiveVal(process_summary(data, NA))
+    data <- reactiveVal(process_data(raw, roster))
 
     # ---- Tables ----------------------------------------------------------------
     output$attendanceTable <- renderTable({
-        data
+        data()
     }, striped = TRUE, hover = TRUE, spacing = "m", width = "100%")
 
     output$summaryTable <- renderTable({
-        summary |>
+        summary() |>
             ungroup() |>
             transmute(
                 Rank = row_number(),
@@ -22,23 +27,23 @@ server <- function(input, output, session) {
 
     # ---- Plots -----------------------------------------------------------------
     output$individual_graph <- renderPlot({
-        member_graph(data, input$selected_id) |>
+        member_graph(data(), input$selected_id) |>
             polish_plot() +
             scale_color_manual(values = rep_len(brand_palette, 100)) +
             guides(x = guide_axis(angle = 45, check.overlap = TRUE))
     })
 
     output$cumulative_graph <- renderPlot({
-        polish_plot(cumulative_plot(data))
+        polish_plot(cumulative_plot(data()))
     })
 
     output$group_average_graph <- renderPlot({
-        polish_plot(group_plot(data))
+        polish_plot(group_plot(data()))
     })
 
     # ---- Front page statistics -------------------------------------------------
     output$total_hours_text <- renderUI({
-        txt <- sub("^Total hours:\\s*", "", find_total_hours(data))
+        txt <- sub("^Total hours:\\s*", "", find_total_hours(data()))
         num <- suppressWarnings(as.numeric(txt))
         if (!is.na(num)) txt <- format(round(num, 2), big.mark = ",", nsmall = 2)
 
@@ -51,15 +56,15 @@ server <- function(input, output, session) {
 
     output$average_hours_text <- renderUI({
         stat_chips(
-            find_average_hours(data),
+            find_average_hours(data()),
             c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
         )
     })
 
     output$average_subteam_text <- renderUI({
-        vals <- find_subteam_hours(data)
+        vals <- find_subteam_hours(data())
         n <- length(strsplit(vals, "||", fixed = TRUE)[[1]])
-        teams <- sort(unique(as.character(na.omit(data$Subteam))), method = "radix")
+        teams <- sort(unique(as.character(na.omit(data()$Subteam))), method = "radix")
         stat_chips(
             vals,
             pick_labels(n, teams, c("Biz", "DS", "Elec", "Mech", "Prog"))
@@ -68,7 +73,7 @@ server <- function(input, output, session) {
 
     output$average_grade_text <- renderUI({
         stat_chips(
-            find_grade_hours(data, TRUE),
+            find_grade_hours(data(), TRUE),
             c("Freshmen", "Sophomores", "Juniors", "Seniors")
         )
     })
