@@ -61,6 +61,34 @@ process_data <- function(raw, roster) {
     return(data)
 }
 
+process_summary <- function(raw, specific) {
+    data <- raw |>
+        filter(
+            case_when(
+                specific == "Freshman" ~ Grade == 9,
+                specific == "Sophomore" ~ Grade == 10,
+                specific == "Junior" ~ Grade == 11,
+                specific == "Senior" ~ Grade == 12,
+                specific == "STL" ~ `Team Status` == "STL",
+                specific == "UL" ~ `Team Status` == "UL",
+                specific == "Business" ~ Subteam == "Business",
+                specific == "Data Science" ~ Subteam == "Data Science",
+                specific == "Electronics" ~ Subteam == "Electronics",
+                specific == "Mechanics" ~ Subteam == "Mechanics",
+                specific == "Programming" ~ Subteam == "Programming",
+                specific == "Identified" ~ identified == TRUE,
+                TRUE ~ student_ID == student_ID
+            )
+        ) |>
+        group_by(student_ID) |>
+        summarize(total = sum(time_spent)) |>
+        arrange(desc(total)) |>
+        rowwise() |>
+        mutate(total_string = hour_min_format(total))
+    
+    return(data)
+}
+
 member_graph <- function(raw, selected_id) {
     data <- raw |>
         filter(student_ID %in% selected_id) |>
@@ -156,6 +184,7 @@ cumulative_plot <- function(raw) {
     ggplot(data, aes(x = date, y = cumulative_hours)) +
         geom_area(fill = "#a7000a", alpha = 0.5) +
         geom_line(color = "black", size = 0.5) +
+        scale_x_date(date_labels = "%b %y", date_breaks = "1 month") +
         labs(x = "Date", y = "Cumulative Hours") + 
         theme_bw()
 }
@@ -171,6 +200,7 @@ group_plot <- function(raw) {
         )
     ggplot(data, aes(x = date, y = total_time_daily)) +
         geom_bar(stat = "identity", fill = "#a7000a") +
+        scale_x_date(date_labels = "%b %y", date_breaks = "1 month") +
         labs(x = "Date", y = "Daily Average Hours") +
         expand_limits(y = 0) +
         theme_bw()
