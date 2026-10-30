@@ -14,6 +14,7 @@ hidden_tabs <- function() {
                 card_header("Total Time by Student"),
                 card_body(
                     fillable = FALSE,
+                    filter_bar(),
                     div(class = "table-scroll", tableOutput("summaryTable"))
                 )
             )

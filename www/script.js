@@ -1,3 +1,5 @@
+// All Claude
+
 function resizeFrame() {
     if (!window.frameElement) return;
     var activeTab = document.querySelector('.tab-pane.active');
@@ -29,6 +31,30 @@ $(document).on('shiny:idle', function() {
 });
 
 setTimeout(resizeFrame, 2000);
+
+// ---- Summary filters ---------------------------------------------------------
+
+// Enable "Clear all" only when something is checked, and show how many are.
+function syncFilterBar() {
+    var $bar = $('.filter-bar');
+    if (!$bar.length) return;
+    var n = $bar.find('input:checked').length;
+    $bar.find('.filter-clear')
+        .prop('disabled', n === 0)
+        .text(n ? 'Clear all (' + n + ')' : 'Clear all');
+}
+
+$(document).on('change', '.filter-bar input[type=checkbox]', syncFilterBar);
+
+// Uncheck everything, then fire 'change' on each group so Shiny sees the update.
+$(document).on('click', '.filter-clear', function () {
+    var $bar = $(this).closest('.filter-bar');
+    $bar.find('input:checked').prop('checked', false);
+    $bar.find('.filter-group').trigger('change');
+    syncFilterBar();
+});
+
+$(syncFilterBar);
 
 // ---- Admin Panel -------------------------------------------------------------
 

@@ -1,6 +1,58 @@
 # Source: All Claude
 
-# Small inline SVG icons so the app needs no icon font or extra packages.
+# ---- Summary filter buttons ---------------------------------------------------
+# Each group is a Shiny checkbox-group input (so input$<id> is a character vector
+# of the checked values, or NULL when nothing is checked), drawn as toggle chips.
+# `choices` is c(Label = "value"): the label is what people see, the value is
+# what the server receives. Adjust the values to match your data.
+filter_group <- function(id, label, choices) {
+    div(
+        id = id,
+        class = "filter-group shiny-input-checkboxgroup",
+        role = "group",
+        `aria-labelledby` = paste0(id, "-label"),
+        span(id = paste0(id, "-label"), class = "filter-group__label", label),
+        div(
+            class = "filter-chips shiny-options-group",
+            lapply(seq_along(choices), function(i) {
+                tags$label(
+                    class = "filter-chip",
+                    tags$input(type = "checkbox", name = id, value = unname(choices[i])),
+                    tags$span(names(choices)[i])
+                )
+            })
+        )
+    )
+}
+
+filter_bar <- function() {
+    div(
+        class = "filter-bar",
+        div(
+            class = "filter-bar__top",
+            span(class = "filter-bar__title", "Filters"),
+            tags$button(type = "button", class = "filter-clear", disabled = NA, "Clear all")
+        ),
+        filter_group(
+            "filter_grade", "Grade",
+            c(Freshman = "Freshman", Sophomore = "Sophomore", Junior = "Junior", Senior = "Senior")
+        ),
+        filter_group(
+            "filter_role", "Role",
+            c(STL = "STL", UL = "UL")
+        ),
+        filter_group(
+            "filter_subteam", "Subteam",
+            c(
+                Business = "Business", `Data Science` = "Data Science", 
+                Electronics = "Electronics", Mechanics = "Mechanics", 
+                Programming = "Programming"
+            )
+        ),
+        filter_group("filter_identified", "Attendance", c(`Identified only` = "Identified"))
+    )
+}
+
 icon_svg <- function(name) {
     paths <- list(
         lock = paste0(

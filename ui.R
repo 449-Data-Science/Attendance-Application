@@ -47,7 +47,7 @@ ui <- navbarPage(
         div(
             class = "row g-4 mb-4",
             div(
-                class = "col-12 col-lg-6",
+                class = "col-12 col-xl-7",
                 card(
                     class = "stat-card stat-card--pink h-100",
                     card_header("Average Subteam Hours per Capita"),
@@ -55,7 +55,7 @@ ui <- navbarPage(
                 )
             ),
             div(
-                class = "col-12 col-lg-6",
+                class = "col-12 col-xl-5",
                 card(
                     class = "stat-card stat-card--blush h-100",
                     card_header("Average Grade Hours per Capita"),
