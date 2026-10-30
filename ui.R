@@ -2,81 +2,91 @@ addResourcePath("assets", "www")
 
 ui <- navbarPage(
     title = "Attendance Application",
+    id = "main_nav",
     theme = bs_theme(
         version = 5,
-        preset = "flatly"
-        ),
+        bg = "#ffffff",
+        fg = "#3a0b12",
+        primary = "#a7000a",
+        secondary = "#e8839f"
+    ),
+    inverse = TRUE,
     collapsible = TRUE,
     header = tagList(
         tags$link(rel = "stylesheet", type = "text/css", href = "assets/styles.css"),
-        tags$head(tags$script(src = "assets/script.js", type = "text/javascript")),
+        tags$head(tags$script(src = "assets/script.js", type = "text/javascript"))
     ),
+
+    # ---- FRONT PAGE ----------------------------------------------------------
     tabPanel(
-        title = "Admin Panel"
-    ),
-    tabPanel(
-        title = "Raw Data",
-        card(
-            class = "graph-card",
-            card_header("Raw"),
-            card_body(
-                fillable = FALSE,
-                tableOutput("attendanceTable")
+        title = "Front Page",
+        div(
+            class = "page-heading",
+            span(class = "eyebrow", "Team overview"),
+            h1("Attendance at a glance")
+        ),
+        div(
+            class = "row g-4 mb-4",
+            div(
+                class = "col-12 col-lg-4",
+                card(
+                    class = "stat-card stat-card--crimson h-100",
+                    card_header("Total Hours Attended"),
+                    card_body(uiOutput("total_hours_text"))
+                )
+            ),
+            div(
+                class = "col-12 col-lg-8",
+                card(
+                    class = "stat-card stat-card--white h-100",
+                    card_header("Average Hours per Meeting"),
+                    card_body(uiOutput("average_hours_text"))
+                )
             )
         ),
-    ),
-    tabPanel(
-        title = "Summary Data",
-        card(
-            class = "graph-card",
-            card_header("Summary"),
-            card_body(
-                fillable = FALSE,
-                tableOutput("summaryTable")
+        div(
+            class = "row g-4 mb-4",
+            div(
+                class = "col-12 col-xl-7",
+                card(
+                    class = "stat-card stat-card--pink h-100",
+                    card_header("Average Subteam Hours per Capita"),
+                    card_body(uiOutput("average_subteam_text"))
+                )
+            ),
+            div(
+                class = "col-12 col-xl-5",
+                card(
+                    class = "stat-card stat-card--blush h-100",
+                    card_header("Average Grade Hours per Capita"),
+                    card_body(uiOutput("average_grade_text"))
+                )
             )
         ),
-    ),
-    tabPanel(
-         title = "Individual",
-         div(class = "container-fluid",
-             div(class = "row",
-                 div(class = "col-12 col-lg-3",
-                    div(
-                        class = "individual-picker", 
-                        virtualSelectInput(
-                            "selected_id", 
-                            label = "Choose a Student:", 
-                            choices = unique(data$student_ID), 
-                            selected = 1, search = TRUE
-                            )
-                        )
-                    ),
-                 div(
-                     class = "col-12 col-lg-9",
-                     card(
-                         class = "graph-card",
-                         card_header("Individual Attendance Plot"),
-                         plotOutput("individual_graph") |> 
-                             withSpinner()
-                     )
-                 )
-             )
-         )
-    ),
-    tabPanel(
-        title = "Group",
-        card(
-            class = "graph-card",
-            card_header("Group Cumulative Attendance Plot"),
-            plotOutput("cumulative_graph")
-        ),
-        card(
-            class = "graph-card",
-            card_header("Group Daily Average Attendance Plot"),
-            plotOutput("group_average_graph")
-        ),
-        card(
-            textOutput("total_hours_text")
+        div(
+            class = "row g-4",
+            div(
+                class = "col-12 col-lg-6",
+                card(
+                    class = "graph-card",
+                    card_header("Group Cumulative Attendance Plot"),
+                    card_body(plotOutput("cumulative_graph", height = "380px"))
+                )
+            ),
+            div(
+                class = "col-12 col-lg-6",
+                card(
+                    class = "graph-card",
+                    card_header("Group Daily Average Attendance Plot"),
+                    card_body(plotOutput("group_average_graph", height = "380px"))
+                )
+            )
         )
+    ),
+
+    # ---- ADMIN PANEL ---------------------------------------------------------
+    tabPanel(
+        title = "Admin Panel",
+        div(class = "admin-wrap", uiOutput("admin_panel"))
     )
 )

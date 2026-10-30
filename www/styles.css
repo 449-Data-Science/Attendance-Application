@@ -1,75 +1,862 @@
-/* ---- BASE AND RESPONSIVE STYLES (MOBILE/TABLET) ---- */
-@media (max-width: 991px) {
-    /* Body & Base Text */
-    body { font-size: 15px !important; line-height: 1.5 !important; }
-    p, li, span, label { font-size: 20px !important; }
-    
-    /* Navbar */
-    .navbar-brand { font-size: 24px !important; }
-    .navbar-nav .nav-link { font-size: 20px !important; padding: 12px 16px !important; }
-    .navbar-toggler { padding: 10px !important; }
-    
-    /* Cards & Layout */
-    .card-header { font-size: 26px !important; padding: 14px !important; }
-    .card-body { padding: 16px !important; }
-    .graph-card { height: 1000px; }
-    .card-body * { font-size: 25px !important; }
-    .card-header * { font-size: 25px !important; }
-    .shiny-html-output { font-size: 25px !important; }
+/* All Claude */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap');
+
+/* =====================================================================
+   PALETTE  —  crimson #a7000a  /  pink  /  white
+   ===================================================================== */
+:root {
+    --crimson:       #a7000a;
+    --crimson-light: #c4101c;
+    --crimson-dark:  #7a0007;
+    --crimson-deep:  #5c0006;
+
+    --pink:          #f4a3b8;
+    --pink-mid:      #f9c9d6;
+    --pink-light:    #fde6ed;
+    --blush:         #fff6f9;
+    --white:         #ffffff;
+
+    --ink:           #3a0b12;
+    --muted:         #8a5560;
+
+    --radius:        18px;
+    --radius-sm:     12px;
+    --shadow-soft:   0 10px 28px -16px rgba(122, 0, 7, 0.45);
+    --shadow-lift:   0 18px 36px -18px rgba(122, 0, 7, 0.55);
+
+    --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-head: 'Poppins', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    /* Bootstrap hooks */
+    --bs-body-font-family: var(--font-body);
+    --bs-body-color: var(--ink);
 }
 
-/* ---- SPECIFICS (ALL SCREENS) ---- */
-.individual-picker { 
-    /* background-color: #faebf8; */
-    background-color: #000000;
-    padding: 15px; 
-    border-radius: 5px; 
-    min-height: 100%;
+/* =====================================================================
+   BASE
+   ===================================================================== */
+body {
+    font-family: var(--font-body);
+    color: var(--ink);
+    background:
+        radial-gradient(900px 420px at 92% -8%, var(--pink-light) 0%, rgba(253, 230, 237, 0) 70%),
+        radial-gradient(700px 380px at -6% 105%, var(--pink-light) 0%, rgba(253, 230, 237, 0) 70%),
+        #fff9fb;
+    min-height: 100vh;
 }
 
-.shiny-spinner-output-container { min-height: 875px !important; }
-.shiny-spinner-output-container .shiny-plot-output { min-height: 875px !important; }
+a { color: var(--crimson); }
+a:hover { color: var(--crimson-dark); }
 
-/* ---- VIRTUAL SELECT PICKERS GLOBAL CSS ---- */
+:focus-visible {
+    outline: 3px solid rgba(167, 0, 10, 0.35);
+    outline-offset: 2px;
+}
+
+.tab-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.75rem 1rem 3.5rem;
+}
+
+.tab-pane.active { animation: fade-up 0.35s ease both; }
+
+@keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* =====================================================================
+   NAVBAR
+   ===================================================================== */
+.navbar {
+    background: linear-gradient(120deg, var(--crimson-light) 0%, var(--crimson) 45%, var(--crimson-dark) 100%) !important;
+    border-bottom: 4px solid var(--pink);
+    box-shadow: 0 8px 24px -12px rgba(122, 0, 7, 0.7);
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+}
+
+.navbar-brand {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.01em;
+    color: var(--white) !important;
+}
+
+.navbar .navbar-nav { gap: 0.25rem; }
+
+.navbar > .container-fluid,
+.navbar .navbar-nav { align-items: center; }
+
+.navbar .navbar-nav .nav-link {
+    font-family: var(--font-head);
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.88) !important;
+    border-radius: 999px;
+    padding: 0.65rem 1.4rem;
+    line-height: 1.25;
+    transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.navbar .navbar-nav .nav-link:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: var(--white) !important;
+}
+
+.navbar .navbar-nav .nav-link.active,
+.navbar .navbar-nav .show > .nav-link {
+    background: var(--white);
+    color: var(--crimson) !important;
+    box-shadow: 0 6px 14px -8px rgba(0, 0, 0, 0.5);
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.55) !important;
+    padding: 0.4rem 0.6rem;
+}
+.navbar-toggler:focus { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35); }
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255,255,255,0.95%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* =====================================================================
+   PAGE HEADINGS
+   ===================================================================== */
+.page-heading { margin: 0 0 1.5rem; }
+
+.page-heading .eyebrow {
+    display: inline-block;
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    background: var(--pink-light);
+    border: 1px solid var(--pink-mid);
+    border-radius: 999px;
+    padding: 0.28rem 0.8rem;
+}
+
+.page-heading h1 {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(1.6rem, 3.2vw, 2.25rem);
+    color: var(--crimson-dark);
+    margin: 0.6rem 0 0;
+    line-height: 1.15;
+}
+
+/* =====================================================================
+   CARDS
+   ===================================================================== */
+.card {
+    position: relative;
+    background: var(--white);
+    border: 1px solid rgba(167, 0, 10, 0.1);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: transparent;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--crimson-dark);
+    border-bottom: 2px solid var(--pink-light);
+    padding: 1rem 1.25rem;
+}
+
+.card-header::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--crimson);
+    box-shadow: 0 0 0 4px var(--pink-light);
+}
+
+.card-body { padding: 1.25rem; }
+
+/* ---- Stat card colour variants ------------------------------------- */
+.stat-card--crimson {
+    background: linear-gradient(150deg, var(--crimson-light) 0%, var(--crimson) 55%, var(--crimson-dark) 100%);
+    color: var(--white);
+    border-color: transparent;
+}
+.stat-card--crimson .card-header {
+    color: var(--white);
+    border-bottom-color: rgba(255, 255, 255, 0.22);
+}
+.stat-card--crimson .card-header::before {
+    background: var(--pink);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18);
+}
+.stat-card--crimson::after {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    right: -70px;
+    bottom: -90px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, rgba(249, 201, 214, 0.5), rgba(249, 201, 214, 0) 70%);
+    pointer-events: none;
+}
+
+.stat-card--white { background: var(--white); }
+
+.stat-card--pink {
+    background: linear-gradient(160deg, var(--pink-mid) 0%, #f6b3c6 100%);
+    border-color: rgba(167, 0, 10, 0.14);
+}
+.stat-card--pink .card-header {
+    border-bottom-color: rgba(167, 0, 10, 0.16);
+    color: var(--crimson-deep);
+}
+.stat-card--pink .card-header::before { box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.55); }
+
+.stat-card--blush {
+    background: var(--blush);
+    border: 2px solid var(--crimson);
+}
+
+/* ---- Big number ---------------------------------------------------- */
+.kpi {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    gap: 0.35rem;
+}
+.kpi__value {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(2.6rem, 5vw, 3.7rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    word-break: break-word;
+}
+.kpi__unit {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pink-mid);
+}
+
+/* ---- Value tiles (weekday / subteam / grade) ----------------------- */
+.chip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 0.75rem;
+}
+
+.stat-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0.85rem 0.5rem;
+    border-radius: var(--radius-sm);
+    background: var(--blush);
+    border: 1px solid var(--pink-mid);
+    text-align: center;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.stat-chip:hover { transform: translateY(-2px); background: var(--pink-light); }
+
+.stat-chip__label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.stat-chip__value {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: var(--crimson);
+    font-variant-numeric: tabular-nums;
+}
+.stat-chip.is-zero .stat-chip__value { color: var(--muted); opacity: 0.55; }
+
+.stat-card--pink .stat-chip {
+    background: rgba(255, 255, 255, 0.72);
+    border-color: rgba(255, 255, 255, 0.9);
+}
+.stat-card--pink .stat-chip:hover { background: var(--white); }
+
+.stat-card--blush .stat-chip { background: var(--pink-light); border-color: var(--pink-mid); }
+.stat-card--blush .stat-chip:hover { background: var(--pink-mid); }
+
+.stat-empty { margin: 0; color: var(--muted); font-style: italic; }
+
+/* =====================================================================
+   PLOTS
+   ===================================================================== */
+.graph-card .shiny-plot-output { border-radius: var(--radius-sm); }
+.graph-card .card-body { padding: 0.75rem 1rem 1rem; }
+
+/* =====================================================================
+   TABLES  (Summary Data / Raw Data)
+   ===================================================================== */
+.table-scroll {
+    max-height: none;
+    overflow: auto;
+    border: 1px solid var(--pink-mid);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+}
+
+.table-scroll table {
+    margin: 0;
+    width: 100%;
+    font-size: 0.93rem;
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: var(--blush);
+    --bs-table-striped-color: var(--ink);
+    --bs-table-hover-bg: var(--pink-light);
+    --bs-table-hover-color: var(--ink);
+}
+
+.table-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--crimson);
+    color: var(--white);
+    font-family: var(--font-head);
+    font-weight: 500;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 0.8rem 1rem;
+    border-bottom: 3px solid var(--pink);
+}
+
+.table-scroll tbody td {
+    padding: 0.65rem 1rem;
+    border-color: var(--pink-light);
+    font-variant-numeric: tabular-nums;
+}
+
+.table-scroll tbody tr:first-child td:first-child { font-weight: 600; }
+
+/* =====================================================================
+   INDIVIDUAL TAB  (student picker)
+   ===================================================================== */
+.picker-card {
+    background: linear-gradient(165deg, var(--pink-light) 0%, var(--pink-mid) 100%);
+    border: 1px solid rgba(167, 0, 10, 0.14);
+}
+
+.picker-card .control-label,
+.picker-card label {
+    font-family: var(--font-head);
+    font-weight: 600;
+    color: var(--crimson-dark);
+    margin-bottom: 0.5rem;
+}
+
+.shiny-spinner-output-container { min-height: 520px !important; }
+.shiny-spinner-output-container .shiny-plot-output { min-height: 520px !important; }
+
+/* ---- Virtual select ------------------------------------------------- */
 .vscomp-wrapper {
-    --vs-border-color: #E683A9;
-    --vs-text-color: #6E6D6D;
-    --vs-active-bg-color: #E683A9;
+    --vs-border-color: var(--pink);
+    --vs-text-color: var(--ink);
+    --vs-active-bg-color: var(--crimson);
     --vs-active-text-color: #ffffff;
+    font-family: var(--font-body);
 }
 
 #selected_id .vscomp-toggle-button {
-    background: #F0B4C4 !important;
-    background-color: #F0B4C4 !important;
-    border: 2px solid #E683A9 !important;
-    border-radius: 5px !important;
+    background: var(--white) !important;
+    background-color: var(--white) !important;
+    border: 2px solid var(--crimson) !important;
+    border-radius: var(--radius-sm) !important;
+    min-height: 3rem;
+    box-shadow: 0 6px 14px -10px rgba(122, 0, 7, 0.6);
 }
 
 #selected_id .vscomp-toggle-button .vscomp-value {
-    color: #6E6D6D !important;
-    font-size: 20px !important;
+    color: var(--ink) !important;
+    font-size: 1.05rem !important;
+    font-weight: 500;
 }
 
-.vscomp-option-text { font-size: 30px !important; }
+#selected_id .vscomp-arrow::after { border-color: var(--crimson) !important; }
 
-.vscomp-option { 
-    font-size: 22px !important; 
-    padding: 14px !important; 
-    min-height: 50px !important; 
+.vscomp-dropbox {
+    border-radius: var(--radius-sm) !important;
+    border: 1px solid var(--pink-mid) !important;
+    box-shadow: var(--shadow-lift) !important;
+}
+
+.vscomp-option-text { font-size: 1.05rem !important; }
+
+.vscomp-option {
+    font-size: 1.05rem !important;
+    padding: 0.8rem 1rem !important;
+    min-height: 3rem !important;
     box-sizing: border-box !important;
-    height: auto !important; 
+    height: auto !important;
     max-height: 55vh !important;
 }
 
-.vscomp-option, .vscomp-option.selected { color: #6E6D6D !important; }
+.vscomp-option, .vscomp-option.selected { color: var(--ink) !important; }
+
+.vscomp-option.selected {
+    background-color: var(--pink-light) !important;
+    font-weight: 600;
+}
 
 .vscomp-option.focused, .vscomp-option.selected.focused {
-    background-color: #F0B4C4 !important;
+    background-color: var(--crimson) !important;
     color: #ffffff !important;
 }
 
-.vscomp-search-input { font-size: 20px !important; padding: 10px !important; }
-.vscomp-no-options { font-size: 20px !important; }
-.vscomp-value-tag { font-size: 18px !important; padding: 4px 8px !important; }
+.vscomp-search-input { font-size: 1.05rem !important; padding: 0.7rem !important; }
+.vscomp-no-options { font-size: 1.05rem !important; }
+.vscomp-value-tag { font-size: 1rem !important; padding: 4px 8px !important; }
 .vscomp-dropbox-container-bottom { display: none !important; }
 .vscomp-dropbox { height: 100% !important; }
+
+/* =====================================================================
+   BUTTONS
+   ===================================================================== */
+.btn-primary {
+    --bs-btn-bg: var(--crimson);
+    --bs-btn-border-color: var(--crimson);
+    --bs-btn-hover-bg: var(--crimson-dark);
+    --bs-btn-hover-border-color: var(--crimson-dark);
+    --bs-btn-active-bg: var(--crimson-deep);
+    --bs-btn-active-border-color: var(--crimson-deep);
+    --bs-btn-focus-shadow-rgb: 167, 0, 10;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--crimson);
+    --bs-btn-border-color: var(--crimson);
+    --bs-btn-hover-bg: var(--crimson);
+    --bs-btn-hover-border-color: var(--crimson);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-active-bg: var(--crimson-dark);
+    --bs-btn-active-border-color: var(--crimson-dark);
+    --bs-btn-focus-shadow-rgb: 167, 0, 10;
+}
+
+/* =====================================================================
+   ADMIN PANEL
+   ===================================================================== */
+.admin-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem 0 2rem;
+}
+
+.auth-card {
+    display: grid;
+    grid-template-columns: 5fr 6fr;
+    width: 100%;
+    max-width: 900px;
+    background: var(--white);
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: 0 34px 64px -30px rgba(122, 0, 7, 0.6), 0 0 0 1px rgba(167, 0, 10, 0.08);
+    animation: fade-up 0.45s ease both;
+}
+
+.auth-card--single { grid-template-columns: 1fr; max-width: 460px; }
+
+.auth-aside {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 3rem 2.25rem;
+    color: var(--white);
+    background: linear-gradient(160deg, var(--crimson-light) 0%, var(--crimson) 50%, #6d0006 100%);
+    overflow: hidden;
+}
+.auth-aside::before {
+    content: "";
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    top: -90px;
+    right: -100px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(249, 201, 214, 0.55), rgba(249, 201, 214, 0) 70%);
+}
+.auth-aside::after {
+    content: "";
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    left: -70px;
+    bottom: -80px;
+    border-radius: 50%;
+    border: 28px solid rgba(255, 255, 255, 0.08);
+}
+.auth-aside > * { position: relative; z-index: 1; }
+
+.auth-aside h2 {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.85rem;
+    margin: 0.5rem 0 0;
+}
+.auth-aside p {
+    margin: 0;
+    color: var(--pink-mid);
+    line-height: 1.55;
+    max-width: 26ch;
+}
+
+.auth-badge {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    font-size: 1.9rem;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    color: var(--white);
+}
+.auth-badge--success {
+    background: var(--pink-light);
+    border-color: var(--pink-mid);
+    color: var(--crimson);
+    margin: 0 auto 1rem;
+}
+
+.auth-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 2.5rem;
+}
+.auth-card--single .auth-main { align-items: center; padding: 2.75rem 2rem; }
+
+.auth-main h3 {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.55rem;
+    color: var(--crimson-dark);
+    margin: 0 0 0.35rem;
+}
+.auth-sub { color: var(--muted); margin: 0 0 1.75rem; }
+
+/* ---- Password field ---- */
+.pw-field { position: relative; margin-bottom: 1.1rem; }
+.pw-field .shiny-input-container { width: 100% !important; max-width: 100%; margin: 0; }
+.pw-field label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--crimson-dark);
+    margin-bottom: 0.4rem;
+}
+.pw-field .form-control {
+    height: 3rem;
+    padding: 0 3rem 0 1rem;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--pink-mid);
+    background: var(--blush);
+    color: var(--ink);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.pw-field .form-control::placeholder { color: #c79aa6; }
+.pw-field .form-control:focus {
+    background: var(--white);
+    border-color: var(--crimson);
+    box-shadow: 0 0 0 4px rgba(167, 0, 10, 0.12);
+}
+
+.pw-toggle {
+    position: absolute;
+    right: 0.4rem;
+    bottom: 0.35rem;
+    display: grid;
+    place-items: center;
+    width: 2.3rem;
+    height: 2.3rem;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+.pw-toggle:hover { background: var(--pink-light); color: var(--crimson); }
+.pw-toggle .icon-eye_off { display: none; }
+.pw-toggle.is-showing .icon-eye { display: none; }
+.pw-toggle.is-showing .icon-eye_off { display: block; }
+
+/* ---- Buttons ---- */
+.btn-auth {
+    height: 3rem;
+    padding: 0 1.5rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-head);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: transform 0.12s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.auth-main > .btn-auth.btn-primary {
+    width: 100%;
+    box-shadow: 0 14px 24px -14px rgba(167, 0, 10, 0.9);
+}
+.btn-auth:hover { transform: translateY(-1px); }
+.btn-auth:active { transform: translateY(0); }
+
+/* ---- Alert ---- */
+.login-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.92rem;
+    font-weight: 500;
+}
+.login-alert .icon { flex: 0 0 auto; font-size: 1.25rem; }
+.login-alert--error {
+    background: var(--pink-light);
+    color: var(--crimson-dark);
+    border: 1px solid var(--pink-mid);
+    border-left: 4px solid var(--crimson);
+    animation: shake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes shake {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(3px); }
+    30%, 50%, 70% { transform: translateX(-5px); }
+    40%, 60% { transform: translateX(5px); }
+}
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media (max-width: 991px) {
+    /* Everything is sized in rem, so bumping the root size scales the whole UI.
+       Change this one number to make phone/tablet text bigger or smaller. */
+    html { font-size: 18px; }
+
+    .tab-content { padding: 1.25rem 0.75rem 3rem; }
+
+    .navbar .navbar-nav .nav-link { padding: 0.75rem 1rem; }
+
+    .chip-grid { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); }
+
+    .graph-card .shiny-plot-output { min-height: 420px; }
+    .shiny-spinner-output-container,
+    .shiny-spinner-output-container .shiny-plot-output { min-height: 600px !important; }
+}
+
+@media (max-width: 767px) {
+    .auth-card { grid-template-columns: 1fr; }
+    .auth-aside { padding: 2rem 1.75rem; }
+    .auth-aside p { max-width: none; }
+    .auth-main { padding: 2rem 1.5rem; }
+}
+
+/* =====================================================================
+   SUMMARY FILTER BAR
+   ===================================================================== */
+.filter-bar {
+    background: var(--blush);
+    border: 1px solid var(--pink-mid);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 1.15rem 0.5rem;
+    margin-bottom: 1.1rem;
+}
+
+.filter-bar__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.35rem;
+}
+
+.filter-bar__title {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--crimson);
+}
+
+.filter-clear {
+    border: 0;
+    background: transparent;
+    color: var(--crimson);
+    font-family: var(--font-head);
+    font-weight: 500;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+.filter-clear:hover:not(:disabled) { background: var(--pink-light); }
+.filter-clear:disabled { opacity: 0.4; cursor: default; }
+
+/* One row per group: label on the left, chips on the right. */
+.filter-group {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding: 0.7rem 0;
+    border-top: 1px dashed var(--pink-mid);
+}
+
+.filter-group__label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.filter-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+.filter-chip { position: relative; margin: 0; cursor: pointer; }
+
+/* The real checkbox stays in place (invisible) so clicks, keyboard and Shiny all work. */
+.filter-chip input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.filter-chip span {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1.5px solid var(--pink);
+    color: var(--crimson-dark);
+    font-family: var(--font-head);
+    font-weight: 500;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    user-select: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.filter-chip:hover span { background: var(--pink-light); border-color: var(--crimson); }
+
+.filter-chip input:checked + span {
+    background: var(--crimson);
+    border-color: var(--crimson);
+    color: var(--white);
+    box-shadow: 0 8px 14px -10px rgba(167, 0, 10, 0.9);
+}
+
+.filter-chip input:focus-visible + span {
+    outline: 3px solid rgba(167, 0, 10, 0.35);
+    outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+    .filter-group { grid-template-columns: 1fr; gap: 0.4rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* Very much appreciated edits after the Victoria test! */
+/* -------------------------------------------------------------------------- */
+/* ---- 1 + 3. Navbar: roomier pills, everything centred vertically ---- */
+@media (min-width: 768px) {
+    .navbar .navbar-collapse { align-items: center; }
+    .navbar .navbar-nav > li { display: flex; align-items: center; }
+}
+
+/* ---- 2. Stat chips: one border width + one border colour everywhere ---- */
+.stat-chip,
+.stat-card--pink .stat-chip,
+.stat-card--blush .stat-chip {
+    border: 1px solid rgba(167, 0, 10, 0.18);
+}
+
+/* ---- 4 + 5. Chips: same height everywhere, labels never wrap ---- */
+.stat-chip {
+    min-height: 4.1rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+}
+
+.stat-chip__label {
+    white-space: nowrap;
+    letter-spacing: 0.08em;
+}
+
+/* Each card's grid decides how narrow a chip may get before it wraps.
+   Default 96px = what the weekday card always used; Subteam/Grade override it. */
+.chip-grid {
+    grid-template-columns: repeat(auto-fit, minmax(var(--chip-min, 96px), 1fr));
+    align-content: start;             /* never stretch chips to fill spare height */
+}
+.stat-card--pink  .chip-grid { --chip-min: 6.4rem; }   /* Business … Programming */
+.stat-card--blush .chip-grid { --chip-min: 5.8rem; }   /* Freshmen … Seniors     */
+
+/* ---- 6. Subteam + Grade cards: hug the chips ---- */
+.card.stat-card--pink > .card-body,
+.card.stat-card--blush > .card-body {
+    padding-top: 1.05rem;             /* equal top + bottom ... */
+    padding-bottom: 1.05rem;
+}
+
+/* ... and the chips sit in the vertical middle of the space under the header,
+   even when the card is stretched taller to match its neighbour. */
+.card.stat-card--pink > .card-body > .shiny-html-output,
+.card.stat-card--blush > .card-body > .shiny-html-output {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ---- 7. More room between the dot and every card title ----
+   (bslib's own `.bslib-card .card-header { gap: .25rem }` was winning before) */
+.card > .card-header,
+.bslib-card > .card-header { gap: 1.1rem; }

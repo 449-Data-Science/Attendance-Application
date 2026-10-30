@@ -13,10 +13,13 @@ library(data.table)
 library(ggplot2)
 library(plotly)
 
-source("helper_functions.R")
-
+source("helpers/helper_functions.R")
+source("helpers/graphs_and_stats.R")
+source("helpers/presentation_helpers.R")
+source("helpers/hidden_tabs.R")
 
 json_string <- Sys.getenv("GOOGLE_SHEETS_JSON")
+password <- Sys.getenv("login_password")
 
 if (json_string != "") {
     gs4_auth(path = json_string)
@@ -24,18 +27,36 @@ if (json_string != "") {
     gs4_auth(path = "data/api-key.json")
 }
 
+if (password != "") {
+    correct_password = password
+} else {
+    correct_password = "biscuit" # You're logged into RStudio, no need for password
+}
 
-sheet_link <- paste0(
+database <- paste0(
     "https://docs.google.com/spreadsheets/d/",
     "1hXbsPjKuyHZYW3LuDfqaSVnZSOkykmPnVyEZ2izvgvA/", 
     "edit?usp=sharing")
-raw <- read_sheet(sheet_link)
 
-data <- process_data(raw)
+roster <- paste0(
+    "https://docs.google.com/spreadsheets/d/",
+    "1cQPqLKTmtBAAgO2a9rRsg2CzREHCtUEYSv8P23XHAwE/",
+    "edit?gid=794401063#gid=794401063"
+)
 
-summary <- data |>
-    group_by(student_ID) |>
-    summarize(total = sum(time_spent)) |>
-    arrange(desc(total)) |>
-    mutate(total_string = hour_min_format(total))
+raw <- read_sheet(database)
+roster <- read_sheet(roster, sheet = 2) |>
+    select(!`Column 1`)
 
+# Adding hard-coded roles for [STLs + Design Lead] and UL
+upper_leadership <- c(269481, 177018, 193630, 170036)
+lower_leadership <- c(
+    197479, 140925, 173269, 195479, 199659, 213943, 
+    10002020, 194228, 10033365, 10051416
+)
+
+roster[roster$`MCPS Student ID` %in% upper_leadership, "Team Status"] = "UL"
+roster[roster$`MCPS Student ID` %in% lower_leadership, "Team Status"] = "STL"
+# End hard-coding
+
+data <- process_data(raw, roster)
