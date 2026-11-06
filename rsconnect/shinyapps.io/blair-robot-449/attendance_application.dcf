@@ -1,0 +1,12 @@
+name: attendance_application
+title:
+username: blair-robot-449
+account: blair-robot-449
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 18320381
+bundleId: 12757416
+url: https://blair-robot-449.shinyapps.io/attendance_application/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
