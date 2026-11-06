@@ -88,5 +88,51 @@ ui <- navbarPage(
     tabPanel(
         title = "Admin Panel",
         div(class = "admin-wrap", uiOutput("admin_panel"))
+    ), 
+    
+    # ---- SETTINGS ------------------------------------------------------------
+    tabPanel(
+        title = "Settings",
+        div(
+            class = "page-heading",
+            span(class = "eyebrow", "Preferences"),
+            h1("Settings")
+        ),
+        div(class = "row g-4", div(class = "col-12 col-md-6",
+            card(
+                class = "graph-card settings-card h-100",
+                card_header("Date Range"),
+                card_body(
+                    fillable = FALSE,
+                    p(
+                        class = "settings-help",
+                        "Choose which meetings to include. Everything updates."
+                    ),
+                    dateRangeInput(
+                        "date_range",
+                        label = NULL,
+                        start = date_limits[1],
+                        end = date_limits[2],
+                        min = date_limits[1],
+                        max = date_limits[2],
+                        format = "mm/dd/yyyy",
+                        separator = "to",
+                        width = "100%"
+                    ),
+                    div(
+                        class = "settings-actions",
+                        actionButton(
+                            "reset_dates", "Reset to full range",
+                            class = "btn-outline-primary btn-sm"
+                        )
+                    ),
+                    uiOutput("date_range_summary")
+                )
+            )),
+            # Boxes 2-4: reserved for later
+            settings_placeholder(2),
+            settings_placeholder(3),
+            settings_placeholder(4)
+        )
     )
 )

@@ -3,19 +3,37 @@ server <- function(input, output, session) {
     login <- reactiveVal(rstudioapi::isAvailable())
     tabs_shown <- reactiveVal(FALSE)
     login_fails <- reactiveVal(0L)
-
+    
     # Dataframes
     summary <- reactiveVal(process_summary(data, NULL))
-
+    
+    # ---- Settings: date range ----------------------------------------------------
+    full_range <- date_bounds(data)
+    
+    filtered_data <- reactive({
+        range <- input$date_range
+        if (is.null(range) || length(range) != 2) return(data)
+        
+        day <- as.Date(data$date, format = "%Y-%m-%d")
+        data[!is.na(day) & day >= range[1] & day <= range[2], ]
+    })
+    
+    observeEvent(input$reset_dates, {
+        updateDateRangeInput(
+            session, "date_range",
+            start = full_range[1], end = full_range[2]
+        )
+    })
+    
     # ---- Tables ----------------------------------------------------------------
     output$attendanceTable <- renderTable({ 
-        data 
+        filtered_data()
     }, striped = TRUE, hover = TRUE, spacing = "m", width = "100%")
-
+    
     output$summaryTable <- renderTable({
         req(login())
         selected <- c(input$filter_grade, input$filter_role, input$filter_subteam)
-        process_summary(data, selected) |>
+        process_summary(filtered_data(), selected) |>
             ungroup() |>
             transmute(
                 Rank = row_number(),
@@ -24,45 +42,52 @@ server <- function(input, output, session) {
                 `Time (hh:mm)` = total_string
             )
     }, striped = TRUE, hover = TRUE, spacing = "m", width = "100%")
-
+    
     # ---- Plots -----------------------------------------------------------------
     output$individual_graph <- renderPlot({
+        data <- filtered_data()
+        need_rows(data)
+        
         member_graph(data, input$selected_id) |>
             polish_plot() +
             scale_color_manual(values = rep_len(brand_palette, 100)) +
             guides(x = guide_axis(angle = 45, check.overlap = TRUE))
     })
-
+    
     output$cumulative_graph <- renderPlot({
+        data <- filtered_data()
+        need_rows(data)
         polish_plot(cumulative_plot(data))
     })
-
+    
     output$group_average_graph <- renderPlot({
+        data <- filtered_data()
+        need_rows(data)
         polish_plot(group_plot(data))
     })
-
+    
     # ---- Front page statistics -------------------------------------------------
     output$total_hours_text <- renderUI({
-        txt <- sub("^Total hours:\\s*", "", find_total_hours(data))
+        txt <- sub("^Total hours:\\s*", "", find_total_hours(filtered_data()))
         num <- suppressWarnings(as.numeric(txt))
         if (!is.na(num)) txt <- format(round(num, 2), big.mark = ",", nsmall = 2)
-
+        
         div(
             class = "kpi",
             span(class = "kpi__value", txt),
             span(class = "kpi__unit", "hours")
         )
     })
-
+    
     output$average_hours_text <- renderUI({
         stat_chips(
-            find_average_hours(data),
+            find_average_hours(filtered_data()),
             c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
         )
     })
-
+    
     output$average_subteam_text <- renderUI({
-        vals <- find_subteam_hours(data)
+        vals <- find_subteam_hours(filtered_data())
         n <- length(strsplit(vals, "||", fixed = TRUE)[[1]])
         teams <- sort(unique(as.character(na.omit(data$Subteam))), method = "radix")
         stat_chips(
@@ -70,14 +95,14 @@ server <- function(input, output, session) {
             pick_labels(n, teams, c("Biz", "DS", "Elec", "Mech", "Prog"))
         )
     })
-
+    
     output$average_grade_text <- renderUI({
         stat_chips(
-            find_grade_hours(data, TRUE),
+            find_grade_hours(filtered_data(), TRUE),
             c("Freshmen", "Sophomores", "Juniors", "Seniors")
         )
     })
-
+    
     # ---- Admin Panel Login ---------------------------------------------------
     output$admin_panel <- renderUI({
         if (login()) {
@@ -122,15 +147,15 @@ server <- function(input, output, session) {
             )
         }
     })
-
+    
     observeEvent(input$login, {
         correct <- get0("correct_password", ifnotfound = NULL)
         if (is.null(correct)) message("correct_password is not defined.")
-
+        
         attempt <- input$password
         ok <- !is.null(correct) && length(attempt) == 1 && nzchar(attempt) &&
             identical(as.character(attempt), as.character(correct))
-
+        
         if (ok) {
             login_fails(0L)
             login(TRUE)
@@ -139,12 +164,12 @@ server <- function(input, output, session) {
             login_fails(login_fails() + 1L)
         }
     })
-
+    
     observeEvent(input$logout, {
         login(FALSE)
         login_fails(0L)
     })
-
+    
     output$login_status <- renderUI({
         req(login_fails() > 0)
         div(

@@ -1,3 +1,8 @@
+# Earliest and latest meeting date in a processed attendance table.
+date_bounds <- function(raw) {
+    range(as.Date(raw$date, format = "%Y-%m-%d"), na.rm = TRUE)
+}
+
 member_graph <- function(raw, selected_id) {
     data <- raw |>
         filter(student_ID %in% selected_id) |>
@@ -40,6 +45,7 @@ find_grade_hours <- function(raw, per_capita) {
         select(student_ID, Grade) |>
         unique()
     count <- sapply(9:12, \(x) sum(temp$Grade == x, na.rm = TRUE)) |> unlist()
+    count <- ifelse(count == 0, 1, count)
     
     data <- raw |>
         drop_na(Grade) |>
@@ -59,14 +65,17 @@ find_subteam_hours <- function(raw) {
         select(student_ID, Subteam) |>
         unique() |>
         group_by(Subteam) |>
-        summarise(count = n())
+        summarise(count = n()) |>
+        pull(count)
     
     data <- raw |>
         drop_na(Subteam) |>
         group_by(Subteam) |>
         summarise(hours = sum(time_spent))
     
-    per_capita <- round(data$hours / members$count, 2)
+    members <- ifelse(members == 0, 1, members)
+
+    per_capita <- round(data$hours / members, 2)
     names(per_capita) <- data$Subteam
     text <- sapply(per_capita, \(x) paste0(hour_min_format(x)))
     text <- paste0(text, collapse = " || ")

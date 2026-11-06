@@ -1,5 +1,26 @@
 # Source: All Claude
 
+# A greyed-out "reserved" box for the Settings grid. When you're ready to use
+# one, swap this call for a card() like the Date Range one below.
+settings_placeholder <- function(n) {
+    div(
+        class = "col-12 col-md-6",
+        card(
+            class = "graph-card settings-card settings-card--placeholder h-100",
+            card_header(paste("Option", n)),
+            card_body(
+                fillable = FALSE,
+                div(
+                    class = "settings-placeholder",
+                    span(class = "settings-placeholder__badge", "Coming soon"),
+                    p("Reserved for a future setting.")
+                )
+            )
+        )
+    )
+}
+
+
 # ---- Summary filter buttons ---------------------------------------------------
 # Each group is a Shiny checkbox-group input (so input$<id> is a character vector
 # of the checked values, or NULL when nothing is checked), drawn as toggle chips.

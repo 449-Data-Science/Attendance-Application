@@ -95,3 +95,7 @@ find_wds <- function(raw) {
         filter(identified == FALSE) |>
         pull(student_ID)
 }
+
+need_rows <- function(d) {
+    validate(need(nrow(d) > 0, "No attendance recorded in this date range."))
+}
