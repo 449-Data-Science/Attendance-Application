@@ -60,3 +60,4 @@ roster[roster$`MCPS Student ID` %in% lower_leadership, "Team Status"] = "STL"
 # End hard-coding
 
 data <- process_data(raw, roster)
+date_limits <- date_bounds(data)
