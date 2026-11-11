@@ -30,7 +30,7 @@ if (json_string != "") {
 if (password != "") {
     correct_password = password
 } else {
-    correct_password = "biscuit" # You're logged into RStudio, no need for password
+    correct_password = "roman_stemp" # You're logged into RStudio, no need for password
 }
 
 database <- paste0(
